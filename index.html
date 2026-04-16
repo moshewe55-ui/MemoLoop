@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MemoLoop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Nav -->
+  <nav class="topnav">
+    <div class="topnav-inner">
+      <div class="logo">
+        <span class="logo-mark">M</span>
+        <span class="logo-text">MemoLoop</span>
+      </div>
+      <button id="theme-toggle" class="icon-btn" type="button" aria-label="החלף מצב תצוגה">
+        <span class="theme-icon">☀</span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="app-shell">
+
+    <!-- Hero -->
+    <section class="hero-bar">
+      <div class="hero-text">
+        <h1>למד. חזור. <em>זכור.</em></h1>
+        <p class="hero-sub">מערכת חזרות חכמה שמלמדת אותך בדיוק מתי לחזור על כל כרטיס</p>
+      </div>
+      <div class="hero-ring" aria-hidden="true">
+        <svg viewBox="0 0 120 120" class="ring-svg">
+          <circle cx="60" cy="60" r="50" class="ring-track"/>
+          <circle cx="60" cy="60" r="50" class="ring-fill" id="streak-ring"/>
+        </svg>
+        <div class="ring-label">
+          <strong id="streak-value" class="ring-number">1</strong>
+          <span class="ring-caption">ימים</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dashboard Stats -->
+    <section class="stats-row">
+      <div class="stat-pill">
+        <span class="stat-icon">🔥</span>
+        <div>
+          <strong id="streak-value2" class="stat-num">1</strong>
+          <span class="stat-label">Streak</span>
+        </div>
+      </div>
+      <div class="stat-pill accent">
+        <span class="stat-icon">📊</span>
+        <div>
+          <strong id="success-rate-value" class="stat-num">0%</strong>
+          <span class="stat-label">הצלחה היום</span>
+        </div>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-icon">🧠</span>
+        <div>
+          <strong id="answered-today-value" class="stat-num">0</strong>
+          <span class="stat-label">נלמד היום</span>
+        </div>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-icon">⚡</span>
+        <div>
+          <strong id="due-count" class="stat-num">0</strong>
+          <span class="stat-label">מוכנים עכשיו</span>
+        </div>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-icon">📚</span>
+        <div>
+          <strong id="items-count" class="stat-num">0</strong>
+          <span class="stat-label">סה"כ פריטים</span>
+        </div>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-icon">⏰</span>
+        <div>
+          <strong id="next-review-label" class="stat-num next-review-text">אין</strong>
+          <span class="stat-label">הבא בתור</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Add Item -->
+    <section class="composer panel">
+      <div class="composer-header">
+        <div class="type-toggle" role="tablist">
+          <button class="tab-btn active" type="button" data-form-type="qa">🧠 Learning</button>
+          <button class="tab-btn" type="button" data-form-type="reminder">🔔 Reminder</button>
+        </div>
+        <p id="form-title" class="composer-title">פריט חדש</p>
+      </div>
+
+      <form id="learning-form" class="composer-form">
+        <input id="editing-id" type="hidden" value="">
+        <input id="item-type-input" type="hidden" value="qa">
+
+        <div id="qa-fields" class="qa-grid">
+          <label class="field-block">
+            <span class="field-label">שאלה</span>
+            <textarea id="question-input" name="question" rows="3" maxlength="240"
+              placeholder="לדוגמה: מה עושה localStorage בדפדפן?"></textarea>
+          </label>
+          <label class="field-block">
+            <span class="field-label">תשובה</span>
+            <textarea id="answer-input" name="answer" rows="3" maxlength="240"
+              placeholder="לדוגמה: שומר נתונים בדפדפן גם אחרי רענון"></textarea>
+          </label>
+        </div>
+
+        <div id="reminder-fields" class="hidden">
+          <label class="field-block">
+            <span class="field-label">טקסט התזכורת</span>
+            <textarea id="reminder-text-input" name="reminder-text" rows="3" maxlength="280"
+              placeholder="לדוגמה: לחזור על פרק 3 לפני השינה"></textarea>
+          </label>
+          <label class="field-block" style="margin-top:14px">
+            <span class="field-label">מתי להציג?</span>
+            <input id="reminder-date-input" type="datetime-local" name="reminder-date">
+          </label>
+        </div>
+
+        <div class="form-footer">
+          <button id="submit-button" type="submit" class="primary-btn">שמור ב-MemoLoop</button>
+          <button id="cancel-edit" type="button" class="ghost-btn hidden">בטל עריכה</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Library -->
+    <section class="library panel">
+      <div class="library-header">
+        <div class="tabs" role="tablist">
+          <button class="tab-btn active" type="button" data-library-tab="qa" aria-selected="true">🧠 Learning</button>
+          <button class="tab-btn" type="button" data-library-tab="reminder" aria-selected="false">🔔 Reminders</button>
+        </div>
+        <div class="library-controls">
+          <label class="search-wrap">
+            <span class="search-icon">🔍</span>
+            <input id="search-input" type="search" placeholder="חיפוש...">
+          </label>
+          <select id="sort-input" name="sort" class="sort-select">
+            <option value="urgent">דחיפות קודם</option>
+            <option value="date">ישן לחדש</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="empty-state" class="empty-state">
+        <span class="empty-icon">🌱</span>
+        <p>אין פריטים להצגה כרגע</p>
+        <span class="empty-hint">הוסף פריט למעלה כדי להתחיל</span>
+      </div>
+
+      <ul id="library-list" class="card-list" aria-live="polite"></ul>
+    </section>
+
+  </main>
+
+  <!-- Review Modal -->
+  <div id="review-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="review-title">
+    <div class="modal-backdrop"></div>
+    <div class="modal-card">
+      <div class="modal-top">
+        <span class="modal-badge">🧠 MemoLoop Review</span>
+        <button id="close-review" class="icon-btn close-btn" type="button" aria-label="סגור">✕</button>
+      </div>
+
+      <h3 id="review-title" class="modal-question" id="review-question"></h3>
+      <p id="review-question" class="modal-question-text"></p>
+
+      <div class="review-answer-wrap">
+        <label class="field-block">
+          <span class="field-label">התשובה שלך</span>
+          <textarea id="review-answer-input" rows="3" maxlength="240"
+            placeholder="כתוב כאן את התשובה שלך..."></textarea>
+        </label>
+        <p id="review-feedback" class="review-feedback"></p>
+      </div>
+
+      <div class="modal-actions">
+        <button id="focus-answer" class="primary-btn" type="button">ענה</button>
+        <button id="submit-review" class="primary-btn" type="button">בדוק תשובה</button>
+        <button id="show-answer" class="ghost-btn" type="button">הצג תשובה</button>
+      </div>
+
+      <div class="grade-panel">
+        <p class="grade-label">דרג את רמת הזכירה</p>
+        <div class="grade-row">
+          <button class="grade-btn again" type="button" data-grade="again">
+            <span class="grade-emoji">😰</span>
+            <span>לא ידעתי</span>
+            <span class="grade-time">שעה</span>
+          </button>
+          <button class="grade-btn hard" type="button" data-grade="hard">
+            <span class="grade-emoji">😓</span>
+            <span>קשה</span>
+            <span class="grade-time">יום</span>
+          </button>
+          <button class="grade-btn good" type="button" data-grade="good">
+            <span class="grade-emoji">🙂</span>
+            <span>טוב</span>
+            <span class="grade-time">3 ימים</span>
+          </button>
+          <button class="grade-btn easy" type="button" data-grade="easy">
+            <span class="grade-emoji">😎</span>
+            <span>קל</span>
+            <span class="grade-time">שבוע</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+
+  <!-- SVG gradient for ring -->
+  <svg class="svg-defs" aria-hidden="true">
+    <defs>
+      <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#63b3ff"/>
+        <stop offset="100%" stop-color="#a78bfa"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+</body>
+</html>
